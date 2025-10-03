@@ -2,7 +2,7 @@ import java.util.Scanner;
 public class ejerciciouno {
     public static void main(String[] args){
        Scanner valor= new Scanner(System.in);
-
+       //comentario par comprobar los cambios en git Hub
        System.out.println("Ingresa el nombre del producto: ");
        String nombre = valor.nextLine();
 
