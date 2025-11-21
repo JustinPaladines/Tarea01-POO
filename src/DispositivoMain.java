@@ -1,50 +1,134 @@
+// DispositivoMain.java
+// Contiene el método main y el menú interactivo (sin precarga)
+
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class DispositivoMain {
+
+    private static final Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
         ArrayList<Dispositivo> lista = new ArrayList<>();
+        boolean salir = false;
 
-        // Se usan try-catch para capturar DatoInvalidoException al crear objetos inválidos
+        while (!salir) {
+            mostrarMenu();
+            int opcion = leerEntero("Opción: ");
+
+            switch (opcion) {
+                case 1:
+                    registrarLaptop(lista);
+                    break;
+                case 2:
+                    registrarTelefono(lista);
+                    break;
+                case 3:
+                    mostrarTodos(lista);
+                    break;
+                case 4:
+                    System.out.println("Saliendo...");
+                    salir = true;
+                    break;
+                default:
+                    System.out.println("Opción inválida. Intente de nuevo.");
+            }
+            System.out.println();
+        }
+        sc.close();
+    }
+
+    private static void mostrarMenu() {
+        System.out.println("----- MENU DISPOSITIVOS -----");
+        System.out.println("1. Registrar Laptop");
+        System.out.println("2. Registrar Teléfono");
+        System.out.println("3. Mostrar todos los dispositivos");
+        System.out.println("4. Salir");
+    }
+
+    private static void registrarLaptop(ArrayList<Dispositivo> lista) {
+        System.out.println("-- Registrar Laptop --");
         try {
-            Laptop l1 = new Laptop("Dell", "Inspiron 15", 650.0, 15.6, false);
-            lista.add(l1);
+            String marca = leerLinea("Marca: ");
+            String modelo = leerLinea("Modelo: ");
+            double precio = leerDouble("Precio: ");
+            double tamPant = leerDouble("Tamaño de pantalla (pulgadas): ");
+            boolean tieneGPU = leerBoolean("¿Tiene GPU dedicada? (s/n): ");
 
-            Laptop l2 = new Laptop("HP", "Pavilion", 1200.0, 14.0, true);
-            lista.add(l2);
-
-            Telefono t1 = new Telefono("Samsung", "A52", 300.0, 4, true);
-            lista.add(t1);
-
-            Telefono t2 = new Telefono("Xiaomi", "Redmi Note", 200.0, 3, false);
-            lista.add(t2);
-
-            // Ejemplo inválido: marca vacía -> lanza excepción y se captura abajo
-            Laptop lInv = new Laptop("", "X100", 500.0, 13.3, false);
-            lista.add(lInv);
-
+            Laptop l = new Laptop(marca, modelo, precio, tamPant, tieneGPU);
+            lista.add(l);
+            System.out.println("Laptop registrada correctamente.");
         } catch (DatoInvalidoException e) {
-            System.out.println("Error al crear un dispositivo: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
+    }
 
-        // Otro bloque try-catch para capturar fallos individuales
+    private static void registrarTelefono(ArrayList<Dispositivo> lista) {
+        System.out.println("-- Registrar Teléfono --");
         try {
-            // Precio negativo -> excepción
-            Telefono tInv2 = new Telefono("MarcaX", "T-1", -50.0, 2, false);
-            lista.add(tInv2);
+            String marca = leerLinea("Marca: ");
+            String modelo = leerLinea("Modelo: ");
+            double precio = leerDouble("Precio: ");
+            int camaras = leerEntero("Cantidad de cámaras: ");
+            boolean tiene5G = leerBoolean("¿Tiene 5G? (s/n): ");
+
+            Telefono t = new Telefono(marca, modelo, precio, camaras, tiene5G);
+            lista.add(t);
+            System.out.println("Teléfono registrado correctamente.");
         } catch (DatoInvalidoException e) {
-            System.out.println("Error al crear teléfono: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
+    }
 
-        // Mostrar información usando polimorfismo: llamar mostrarInfo() en cada objeto
-        System.out.println("\n--- Lista de dispositivos registrados ---");
-        for (Dispositivo d : lista) {
-            System.out.println(d.mostrarInfo()); // se ejecuta la versión de la clase real (Laptop/Telefono)
+    private static void mostrarTodos(ArrayList<Dispositivo> lista) {
+        if (lista.isEmpty()) {
+            System.out.println("No hay dispositivos registrados.");
+            return;
         }
-
-        // También puedes mostrar con toString(), que llama a mostrarInfo()
-        System.out.println("\n--- Mostrar usando toString() ---");
+        System.out.println("\n--- LISTA DE DISPOSITIVOS ---");
         for (Dispositivo d : lista) {
-            System.out.println(d); // toString() usa mostrarInfo()
+            System.out.println(d.mostrarInfo());
+        }
+    }
+
+    /* Lectura segura */
+
+    private static String leerLinea(String prompt) {
+        System.out.print(prompt);
+        return sc.nextLine().trim();
+    }
+
+    private static int leerEntero(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String linea = sc.nextLine().trim();
+            try {
+                return Integer.parseInt(linea);
+            } catch (NumberFormatException e) {
+                System.out.println("Ingrese un número entero válido.");
+            }
+        }
+    }
+
+    private static double leerDouble(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String linea = sc.nextLine().trim();
+            try {
+                return Double.parseDouble(linea);
+            } catch (NumberFormatException e) {
+                System.out.println("Ingrese un número válido (use punto para decimales).");
+            }
+        }
+    }
+
+    private static boolean leerBoolean(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String linea = sc.nextLine().trim().toLowerCase();
+            if (linea.startsWith("s") || linea.equals("si")) return true;
+            if (linea.startsWith("n") || linea.equals("no")) return false;
+            System.out.println("Respuesta inválida. Escriba 's' para sí o 'n' para no.");
         }
     }
 }

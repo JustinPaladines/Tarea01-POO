@@ -1,13 +1,3 @@
-import java.util.ArrayList;
-
-// excepción personalizada (runtime para hacerlo simple)
-class DatoInvalidoException extends RuntimeException {
-    public DatoInvalidoException(String msg) {
-        super(msg);
-    }
-}
-
-// dispositivo
 public class Dispositivo {
     private String marca;
     private String modelo;
@@ -19,7 +9,7 @@ public class Dispositivo {
         setPrecio(precio);
     }
 
-    // getters y setters (encapsulamiento + validación)
+    /* Getters y setters con validación */
     public String getMarca() {
         return marca;
     }
@@ -36,8 +26,7 @@ public class Dispositivo {
     }
 
     public void setModelo(String modelo) {
-        if (modelo == null) modelo = "";
-        this.modelo = modelo.trim();
+        this.modelo = (modelo == null) ? "" : modelo.trim();
     }
 
     public double getPrecio() {
@@ -51,9 +40,10 @@ public class Dispositivo {
         this.precio = precio;
     }
 
-    // método que será sobrescrito (polimorfismo)
+    /* Método que se sobrescribe en las subclases */
     public String mostrarInfo() {
-        return "Dispositivo - Marca: " + marca + ", Modelo: " + modelo + ", Precio: $" + precio;
+        return String.format("Dispositivo - Marca: %s, Modelo: %s, Precio: $%.2f",
+                getMarca(), getModelo(), getPrecio());
     }
 
     @Override
@@ -62,10 +52,10 @@ public class Dispositivo {
     }
 }
 
-// laptop
+/* Clase Laptop, hereda de Dispositivo */
 class Laptop extends Dispositivo {
     private double tamanoPantalla; // pulgadas
-    private boolean tieneGPU;      // si tiene GPU dedicada
+    private boolean tieneGPU;
 
     public Laptop(String marca, String modelo, double precio, double tamanoPantalla, boolean tieneGPU) {
         super(marca, modelo, precio);
@@ -94,18 +84,15 @@ class Laptop extends Dispositivo {
 
     @Override
     public String mostrarInfo() {
-        return "Laptop - Marca: " + getMarca()
-                + ", Modelo: " + getModelo()
-                + ", Precio: $" + getPrecio()
-                + ", Pantalla: " + tamanoPantalla + "''"
-                + ", GPU dedicada: " + (tieneGPU ? "sí" : "no");
+        return String.format("Laptop - Marca: %s, Modelo: %s, Precio: $%.2f, Pantalla: %.1f\", GPU dedicada: %s",
+                getMarca(), getModelo(), getPrecio(), tamanoPantalla, (tieneGPU ? "sí" : "no"));
     }
 }
 
-// telefono
+/* Clase Telefono, hereda de Dispositivo */
 class Telefono extends Dispositivo {
-    private int camaras;      // cantidad de cámaras
-    private boolean tiene5G;  // 5G
+    private int camaras;
+    private boolean tiene5G;
 
     public Telefono(String marca, String modelo, double precio, int camaras, boolean tiene5G) {
         super(marca, modelo, precio);
@@ -119,7 +106,7 @@ class Telefono extends Dispositivo {
 
     public void setCamaras(int camaras) {
         if (camaras < 0) {
-            throw new DatoInvalidoException("Las cámaras no pueden ser negativas");
+            throw new DatoInvalidoException("La cantidad de cámaras no puede ser negativa");
         }
         this.camaras = camaras;
     }
@@ -134,10 +121,7 @@ class Telefono extends Dispositivo {
 
     @Override
     public String mostrarInfo() {
-        return "Teléfono - Marca: " + getMarca()
-                + ", Modelo: " + getModelo()
-                + ", Precio: $" + getPrecio()
-                + ", Cámaras: " + camaras
-                + ", 5G: " + (tiene5G ? "sí" : "no");
+        return String.format("Teléfono - Marca: %s, Modelo: %s, Precio: $%.2f, Cámaras: %d, 5G: %s",
+                getMarca(), getModelo(), getPrecio(), camaras, (tiene5G ? "sí" : "no"));
     }
 }
